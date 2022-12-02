@@ -14,6 +14,13 @@ namespace AoC2022Test
             Assert.AreEqual(193697, d.TopThreeElfCalories());
         }
 
+        [TestMethod]
+        public void Day02()
+        {
+            var d = new Day02();
+            Assert.AreEqual(14531, d.PlanAScore()); 
+            Assert.AreEqual(11258, d.PlanBScore());
+        }
 
         public void DayStarter()
         {

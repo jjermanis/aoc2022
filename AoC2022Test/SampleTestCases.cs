@@ -22,5 +22,12 @@ namespace AoC2022Test
             Assert.AreEqual(12, d.PlanBScore());
         }
 
+        [TestMethod]
+        public void Day03()
+        {
+            var d = new Day03("Day03Test.txt");
+            Assert.AreEqual(157, d.SumMisplacedItems());
+            Assert.AreEqual(70, d.SumBadges());
+        }
     }
 }

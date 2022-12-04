@@ -29,5 +29,13 @@ namespace AoC2022Test
             Assert.AreEqual(157, d.SumMisplacedItems());
             Assert.AreEqual(70, d.SumBadges());
         }
+
+        [TestMethod]
+        public void Day04()
+        {
+            var d = new Day04("Day04Test.txt");
+            Assert.AreEqual(2, d.FullyContainedCount());
+            Assert.AreEqual(4, d.OverlapCount());
+        }
     }
 }

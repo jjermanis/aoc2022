@@ -30,6 +30,14 @@ namespace AoC2022Test
             Assert.AreEqual(2567, d.SumBadges());
         }
 
+        [TestMethod]
+        public void Day04()
+        {
+            var d = new Day04();
+            Assert.AreEqual(490, d.FullyContainedCount());
+            Assert.AreEqual(921, d.OverlapCount());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

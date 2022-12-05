@@ -37,5 +37,13 @@ namespace AoC2022Test
             Assert.AreEqual(2, d.FullyContainedCount());
             Assert.AreEqual(4, d.OverlapCount());
         }
+
+        [TestMethod]
+        public void Day05()
+        {
+            var d = new Day05("Day05Test.txt");
+            Assert.AreEqual("CMZ", d.SingleCrateSummary());
+            Assert.AreEqual("MCD", d.MultiCrateSummary());
+        }
     }
 }

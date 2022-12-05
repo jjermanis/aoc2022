@@ -38,6 +38,14 @@ namespace AoC2022Test
             Assert.AreEqual(921, d.OverlapCount());
         }
 
+        [TestMethod]
+        public void Day05()
+        {
+            var d = new Day05();
+            Assert.AreEqual("VWLCWGSDQ", d.SingleCrateSummary());
+            Assert.AreEqual("TCGLQSLPW", d.MultiCrateSummary());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

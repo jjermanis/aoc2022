@@ -45,5 +45,29 @@ namespace AoC2022Test
             Assert.AreEqual("CMZ", d.SingleCrateSummary());
             Assert.AreEqual("MCD", d.MultiCrateSummary());
         }
+
+        [TestMethod]
+        public void Day06()
+        {
+            var d = new Day06("Day06Test.txt");
+            Assert.AreEqual(7, d.StartOfPacket());
+            Assert.AreEqual(19, d.StartOfMessage());
+
+            var d2 = new Day06("Day06Test2.txt");
+            Assert.AreEqual(5, d2.StartOfPacket());
+            Assert.AreEqual(23, d2.StartOfMessage());
+
+            var d3 = new Day06("Day06Test3.txt");
+            Assert.AreEqual(6, d3.StartOfPacket());
+            Assert.AreEqual(23, d3.StartOfMessage());
+
+            var d4 = new Day06("Day06Test4.txt");
+            Assert.AreEqual(10, d4.StartOfPacket());
+            Assert.AreEqual(29, d4.StartOfMessage());
+
+            var d5 = new Day06("Day06Test5.txt");
+            Assert.AreEqual(11, d5.StartOfPacket());
+            Assert.AreEqual(26, d5.StartOfMessage());
+        }
     }
 }

@@ -46,6 +46,14 @@ namespace AoC2022Test
             Assert.AreEqual("TCGLQSLPW", d.MultiCrateSummary());
         }
 
+        [TestMethod]
+        public void Day06()
+        {
+            var d = new Day06();
+            Assert.AreEqual(1625, d.StartOfPacket());
+            Assert.AreEqual(2250, d.StartOfMessage());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

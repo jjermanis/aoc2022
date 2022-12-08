@@ -62,6 +62,14 @@ namespace AoC2022Test
             Assert.AreEqual(549173, d.OptimalDirectoryDeletionSize());
         }
 
+        [TestMethod]
+        public void Day08()
+        {
+            var d = new Day08();
+            Assert.AreEqual(1715, d.VisibleTreeCount());
+            Assert.AreEqual(374400, d.BestScenicScore());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

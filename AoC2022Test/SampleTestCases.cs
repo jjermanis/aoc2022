@@ -77,5 +77,13 @@ namespace AoC2022Test
             Assert.AreEqual(95437, d.SmallDirectoryTotalSize());
             Assert.AreEqual(24933642, d.OptimalDirectoryDeletionSize());
         }
+
+        [TestMethod]
+        public void Day08()
+        {
+            var d = new Day08("Day08Test.txt");
+            Assert.AreEqual(21, d.VisibleTreeCount());
+            Assert.AreEqual(8, d.BestScenicScore());
+        }
     }
 }

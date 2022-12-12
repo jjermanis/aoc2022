@@ -85,5 +85,16 @@ namespace AoC2022Test
             Assert.AreEqual(21, d.VisibleTreeCount());
             Assert.AreEqual(8, d.BestScenicScore());
         }
+
+        [TestMethod]
+        public void Day09()
+        {
+            var d = new Day09("Day09Test.txt");
+            Assert.AreEqual(13, d.UniqueTailPositions2());
+            Assert.AreEqual(1, d.UniqueTailPositions10());
+
+            var d2 = new Day09("Day09Test2.txt");
+            Assert.AreEqual(36, d2.UniqueTailPositions10());
+        }
     }
 }

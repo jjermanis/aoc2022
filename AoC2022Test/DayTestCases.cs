@@ -70,6 +70,14 @@ namespace AoC2022Test
             Assert.AreEqual(374400, d.BestScenicScore());
         }
 
+        [TestMethod]
+        public void Day09()
+        {
+            var d = new Day09();
+            Assert.AreEqual(6503, d.UniqueTailPositions2());
+            Assert.AreEqual(2724, d.UniqueTailPositions10());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

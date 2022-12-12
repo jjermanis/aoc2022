@@ -96,5 +96,13 @@ namespace AoC2022Test
             var d2 = new Day09("Day09Test2.txt");
             Assert.AreEqual(36, d2.UniqueTailPositions10());
         }
+
+        [TestMethod]
+        public void Day10()
+        {
+            var d = new Day10("Day10Test.txt");
+            Assert.AreEqual(13140, d.InterestingSignalSum());
+            // TODO: figure out a unit test for this one
+        }
     }
 }

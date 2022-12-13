@@ -86,6 +86,14 @@ namespace AoC2022Test
             // TODO: figure out a unit test for this one
         }
 
+        [TestMethod]
+        public void Day11()
+        {
+            var d = new Day11();
+            Assert.AreEqual(102399, d.MonkeyBusinessLevelShort());
+            Assert.AreEqual(23641658401, d.MonkeyBusinessLevelLong());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

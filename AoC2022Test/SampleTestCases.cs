@@ -104,5 +104,13 @@ namespace AoC2022Test
             Assert.AreEqual(13140, d.InterestingSignalSum());
             // TODO: figure out a unit test for this one
         }
+
+        [TestMethod]
+        public void Day11()
+        {
+            var d = new Day11("Day11Test.txt");
+            Assert.AreEqual(10605, d.MonkeyBusinessLevelShort());
+            Assert.AreEqual(2713310158, d.MonkeyBusinessLevelLong());
+        }
     }
 }

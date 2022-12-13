@@ -55,8 +55,9 @@ namespace AoC2022
 
         private List<int> ValuesOverTime()
         {
-            var result = new List<int>();
-            result.Add(int.MinValue);
+            // Put an unused value at index 0 - the problem states things as starting at
+            // index 1, making this code easier to read.
+            var result = new List<int>() { int.MinValue };
             var x = 1;
             var cycleNum = 1;
 

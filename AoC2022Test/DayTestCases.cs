@@ -94,6 +94,22 @@ namespace AoC2022Test
             Assert.AreEqual(23641658401, d.MonkeyBusinessLevelLong());
         }
 
+        [TestMethod]
+        public void Day12()
+        {
+            var d = new Day12();
+            Assert.AreEqual(408, d.PathLengthFromStart());
+            Assert.AreEqual(399, d.PathLengthFromLowPoint());
+        }
+
+        [TestMethod]
+        public void Day13()
+        {
+            var d = new Day13();
+            Assert.AreEqual(5350, d.Part1());
+            Assert.AreEqual(19570, d.Part2());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

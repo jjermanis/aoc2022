@@ -128,5 +128,13 @@ namespace AoC2022Test
             Assert.AreEqual(13, d.Part1());
             Assert.AreEqual(140, d.Part2());
         }
+
+        [TestMethod]
+        public void Day14()
+        {
+            var d = new Day14("Day14Test.txt");
+            Assert.AreEqual(24, d.SoundCountToFloor());
+            Assert.AreEqual(93, d.SandCountToSource());
+        }
     }
 }

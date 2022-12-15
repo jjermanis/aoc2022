@@ -110,6 +110,14 @@ namespace AoC2022Test
             Assert.AreEqual(19570, d.Part2());
         }
 
+        [TestMethod]
+        public void Day14()
+        {
+            var d = new Day14();
+            Assert.AreEqual(1298, d.SoundCountToFloor());
+            Assert.AreEqual(25585, d.SandCountToSource());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

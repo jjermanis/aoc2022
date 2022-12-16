@@ -118,6 +118,14 @@ namespace AoC2022Test
             Assert.AreEqual(25585, d.SandCountToSource());
         }
 
+        [TestMethod]
+        public void Day15()
+        {
+            var d = new Day15();
+            Assert.AreEqual(5335787, d.NoBeaconCountRow2M());
+            Assert.AreEqual(13673971349056, d.DistressTuningFrequency4M());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

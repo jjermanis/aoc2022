@@ -136,5 +136,13 @@ namespace AoC2022Test
             Assert.AreEqual(24, d.SoundCountToFloor());
             Assert.AreEqual(93, d.SandCountToSource());
         }
+
+        [TestMethod]
+        public void Day15()
+        {
+            var d = new Day15("Day15Test.txt");
+            Assert.AreEqual(26, d.NoBeaconCount(10));
+            Assert.AreEqual(56000011, d.DistressTuningFrequency(20));
+        }
     }
 }

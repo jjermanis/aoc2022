@@ -126,6 +126,14 @@ namespace AoC2022Test
             Assert.AreEqual(13673971349056, d.DistressTuningFrequency4M());
         }
 
+        [TestMethod]
+        public void Day16()
+        {
+            var d = new Day16();
+            Assert.AreEqual(1659, d.MaxPressureSolo());
+            Assert.AreEqual(-1, d.Part2());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();

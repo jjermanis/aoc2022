@@ -144,5 +144,13 @@ namespace AoC2022Test
             Assert.AreEqual(26, d.NoBeaconCount(10));
             Assert.AreEqual(56000011, d.DistressTuningFrequency(20));
         }
+
+        [TestMethod]
+        public void Day16()
+        {
+            var d = new Day16("Day16Test.txt");
+            Assert.AreEqual(1651, d.MaxPressureSolo());
+            Assert.AreEqual(-1, d.Part2());
+        }
     }
 }

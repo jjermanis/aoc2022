@@ -152,5 +152,21 @@ namespace AoC2022Test
             Assert.AreEqual(1651, d.MaxPressureSolo());
             Assert.AreEqual(-1, d.Part2());
         }
+
+        [TestMethod]
+        public void Day17()
+        {
+            var d = new Day17("Day17Test.txt");
+            Assert.AreEqual(-1, d.Part1());
+            Assert.AreEqual(-1, d.Part2());
+        }
+
+        [TestMethod]
+        public void Day18()
+        {
+            var d = new Day18("Day18Test.txt");
+            Assert.AreEqual(64, d.OpenFaceCount());
+            Assert.AreEqual(58, d.ExposedFaceCount());
+        }
     }
 }

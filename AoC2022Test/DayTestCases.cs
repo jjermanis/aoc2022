@@ -138,7 +138,7 @@ namespace AoC2022Test
         public void Day17()
         {
             var d = new Day17();
-            Assert.AreEqual(-1, d.Part1());
+            Assert.AreEqual(3067, d.Part1());
             Assert.AreEqual(-1, d.Part2());
         }
 

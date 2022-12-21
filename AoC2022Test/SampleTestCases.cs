@@ -168,5 +168,13 @@ namespace AoC2022Test
             Assert.AreEqual(64, d.OpenFaceCount());
             Assert.AreEqual(58, d.ExposedFaceCount());
         }
+
+        [TestMethod]
+        public void Day20()
+        {
+            var d = new Day20();
+            Assert.AreEqual(3, d.Part1());
+            Assert.AreEqual(-1, d.Part2());
+        }
     }
 }

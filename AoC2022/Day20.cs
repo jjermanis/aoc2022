@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC2022
 {
     public class Day20 : DayBase, IDay
     {
+        // TODO - takes over a second, which is... OK
+        // String conversion is used to track order - try using a pure long? Or a Tuple?
+
         private readonly IEnumerable<string> _lines;
 
         public Day20(string filename)
@@ -17,59 +19,80 @@ namespace AoC2022
 
         public void Do()
         {
-            Console.WriteLine($"{nameof(Part1)}: {Part1()}");
-            Console.WriteLine($"{nameof(Part2)}: {Part2()}");
+            Console.WriteLine($"{nameof(GroveSum)}: {GroveSum()}");
+            Console.WriteLine($"{nameof(DecryptedGroveSum)}: {DecryptedGroveSum()}");
         }
 
-        public int Part1()
+        public long GroveSum()
         {
             var list = ParseList();
-            var moved = MoveNumbers(list);
-            var zIndex = moved.IndexOf(0);
-            var v1 = moved[(zIndex + 1000) % list.Count];
-            var v2 = moved[(zIndex + 2000) % list.Count];
-            var v3 = moved[(zIndex + 3000) % list.Count];
-            return v1 + v2 + v3;
+            var moved = MoveNumbers(list, 1);
+            return SumOfCoords(moved);
         }
 
-        public int Part2()
+        public long DecryptedGroveSum()
         {
-            
-            return 0;
+            var list = ParseList(811589153);
+            var moved = MoveNumbers(list, 10);
+            return SumOfCoords(moved);
         }
 
-        private List<int> ParseList()
+        private List<long> ParseList()
+            => ParseList(1);
+
+        private List<long> ParseList(long key)
         {
-            var result = new List<int>();
+            var result = new List<long>();
             foreach (var line in _lines)
-                result.Add(int.Parse(line));
+                result.Add(key * long.Parse(line));
             return result;
         }
 
-        private List<int> MoveNumbers(IList<int> numbers)
+        private List<long> MoveNumbers(
+            IList<long> numberOrder,
+            int repetitions)
         {
-            var order = new List<int>(numbers);
-            var formalList = new List<string>();
-            for (int i = 0; i < order.Count; i++)
-                formalList.Add($"{order[i]}_{i}");
-            var listLen = order.Count;
-            for (int i = 0; i < order.Count; i++)
+            var detailList = new List<string>();
+            for (int i = 0; i < numberOrder.Count; i++)
+                detailList.Add($"{numberOrder[i]}_{i}");
+            var listLen = numberOrder.Count;
+
+            for (int c = 0; c < repetitions; c++)
             {
-                var name = $"{order[i]}_{i}";
-                var index = formalList.IndexOf(name);
-                formalList.RemoveAt(index);
-                var delta = order[i];
-                var newIndex = index + delta;
-                while (newIndex < 0)
-                    newIndex = newIndex + (listLen - 1);
-                if (newIndex >= listLen)
-                    newIndex = newIndex % (listLen - 1);
-                formalList.Insert(newIndex, name);
+                for (int i = 0; i < listLen; i++)
+                {
+                    var detailName = $"{numberOrder[i]}_{i}";
+                    var index = detailList.IndexOf(detailName);
+                    detailList.RemoveAt(index);
+                    var delta = numberOrder[i];
+                    var newIndex = index + delta;
+
+                    if (newIndex < 0)
+                    {
+                        // In C#, mod operator on a negative returns a negative.
+                        // These steps take that mod, and turn it to the postive equivalent.
+                        var temp = newIndex % (listLen - 1);
+                        newIndex = temp + listLen - 1;
+                    }    
+                    if (newIndex >= listLen)
+                        newIndex = newIndex % (listLen - 1);
+                    detailList.Insert((int)newIndex, detailName);
+                }
             }
 
-            var result = new List<int>();
-            foreach (var val in formalList)
-                result.Add(int.Parse(val.Split('_')[0]));
+            // Strip away the detailed name, and get back to the original numbers
+            var result = new List<long>();
+            foreach (var val in detailList)
+                result.Add(long.Parse(val.Split('_')[0]));
+            return result;
+        }
+
+        private long SumOfCoords(IList<long> numbers)
+        {
+            var zIndex = numbers.IndexOf(0);
+            long result = 0L;
+            for (int i = 1; i <= 3; i++)
+                result += numbers[(1000 * i + zIndex) % numbers.Count];
             return result;
         }
     }

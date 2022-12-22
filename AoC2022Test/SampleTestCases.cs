@@ -172,9 +172,9 @@ namespace AoC2022Test
         [TestMethod]
         public void Day20()
         {
-            var d = new Day20();
-            Assert.AreEqual(3, d.Part1());
-            Assert.AreEqual(-1, d.Part2());
+            var d = new Day20("Day20Test.txt");
+            Assert.AreEqual(3, d.GroveSum());
+            Assert.AreEqual(1623178306, d.DecryptedGroveSum());
         }
     }
 }

@@ -139,7 +139,7 @@ namespace AoC2022Test
         {
             var d = new Day17();
             Assert.AreEqual(3067, d.Part1());
-            Assert.AreEqual(-1, d.Part2());
+            Assert.AreEqual(1514369501484, d.Part2());
         }
 
         [TestMethod]
@@ -165,10 +165,18 @@ namespace AoC2022Test
             Assert.AreEqual(14375678667089, d.DecryptedGroveSum());
         }
 
+        [TestMethod]
+        public void Day21()
+        {
+            var d = new Day21();
+            Assert.AreEqual(85616733059734, d.MonkeyComputation());
+            Assert.AreEqual(3560324848168, d.HumanIntervention());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();
-            Assert.AreEqual(-1, d.Part1());
+            Assert.AreEqual(85616733059734, d.Part1());
             Assert.AreEqual(-1, d.Part2());
         }
     }

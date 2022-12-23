@@ -158,7 +158,7 @@ namespace AoC2022Test
         {
             var d = new Day17("Day17Test.txt");
             Assert.AreEqual(3068, d.Part1());
-            Assert.AreEqual(-1, d.Part2());
+            // Assert.AreEqual(-1, d.Part2()); // Keep commented for now - runs for half-hour
         }
 
         [TestMethod]
@@ -175,6 +175,14 @@ namespace AoC2022Test
             var d = new Day20("Day20Test.txt");
             Assert.AreEqual(3, d.GroveSum());
             Assert.AreEqual(1623178306, d.DecryptedGroveSum());
+        }
+
+        [TestMethod]
+        public void Day21()
+        {
+            var d = new Day21("Day21Test.txt");
+            Assert.AreEqual(152, d.MonkeyComputation());
+            Assert.AreEqual(301, d.HumanIntervention());
         }
     }
 }

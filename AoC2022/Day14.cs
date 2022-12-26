@@ -5,9 +5,6 @@ namespace AoC2022
 {
     public class Day14 : DayBase, IDay
     {
-        // TODO this runs in about 3 seconds. Fast... but very long compared to standards  
-        // of other items. Worth a look?
-        // Profiler shows that 95% of CPU is spent in Dictionary.ContainsKey().
 
         private struct Point
         {
@@ -70,25 +67,6 @@ namespace AoC2022
         public int SandCountToSource()
             => SandCountToFill(true);
 
-
-        private void PrintMap(IDictionary<Point, char> map)
-        {
-            for (var y = 0; y < 169; y++)
-            //for (var y=0; y < 10; y++)
-            {
-                Console.WriteLine();
-                for (var x = 247; x < 640; x++)
-                //for (var x = 492; x < 506; x++)
-                {
-                    var curr = new Point(x, y);
-                    if (!map.ContainsKey(curr))
-                        Console.Write('.');
-                    else
-                        Console.Write(map[curr]);
-                }
-            }
-        }
-
         private int SandCountToFill(bool createGround)
         {
             var map = InitMap(createGround);
@@ -98,7 +76,7 @@ namespace AoC2022
                 (var point, var isLanded) = DropSand(map);
                 if (!isLanded)
                     break;
-                map[point] = 'o';
+                map[(point.X, point.Y)] = 'o';
                 count++;
                 if (point.Y == 0)
                     break;
@@ -106,25 +84,25 @@ namespace AoC2022
             return count;
         }
 
-        private (Point point, bool isLanded) DropSand(IDictionary<Point, char> map)
+        private (Point point, bool isLanded) DropSand(IDictionary<(int x, int y), char> map)
         {
             var x = 500;
             var y = 0;
 
             while (y < 200)
             {
-                if (!map.ContainsKey(new Point(x, y+1)))
+                if (!map.ContainsKey((x, y+1)))
                 {
                     y++;
                     continue;
                 }
-                if (!map.ContainsKey(new Point(x-1, y+1)))
+                if (!map.ContainsKey((x-1, y+1)))
                 {
                     x--;
                     y++;
                     continue;
                 }
-                if (!map.ContainsKey(new Point(x + 1, y+1)))
+                if (!map.ContainsKey((x + 1, y+1)))
                 {
                     x++;
                     y++;
@@ -135,23 +113,23 @@ namespace AoC2022
             return (new Point(-1, -1), false);
         }
 
-        private IDictionary<Point, char> InitMap(bool createGround)
+        private IDictionary<(int x, int y), char> InitMap(bool createGround)
         {
-            var result = new Dictionary<Point, char>();
+            var result = new Dictionary<(int x, int y), char>();
             foreach (var line in _lines)
                 AddLine(result, line);
 
-            var minX = 500;
-            var maxX = 500;
-            var maxY = 0;
-
             if (createGround)
             {
+                var minX = 500;
+                var maxX = 500;
+                var maxY = 0;
+
                 foreach (var point in result.Keys)
                 {
-                    minX = Math.Min(minX, point.X);
-                    maxX = Math.Max(maxX, point.X);
-                    maxY = Math.Max(maxY, point.Y);
+                    minX = Math.Min(minX, point.x);
+                    maxX = Math.Max(maxX, point.x);
+                    maxY = Math.Max(maxY, point.y);
                 }
                 minX -= 200;
                 maxX += 200;
@@ -162,7 +140,7 @@ namespace AoC2022
         }
 
         private void AddLine(
-            IDictionary<Point, char> map, 
+            IDictionary<(int x, int y), char> map, 
             string line)
         {
             var points = line.Split("->");
@@ -171,8 +149,8 @@ namespace AoC2022
             {
                 var next = new Point(points[i]);
                 foreach (var point in curr.PointChain(next))
-                    if (!map.ContainsKey(point))
-                        map[point] = '#';
+                    if (!map.ContainsKey((point.X, point.Y)))
+                        map[(point.X, point.Y)] = '#';
                 curr = next;
             }
         }

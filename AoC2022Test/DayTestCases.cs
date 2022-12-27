@@ -138,8 +138,8 @@ namespace AoC2022Test
         public void Day17()
         {
             var d = new Day17();
-            Assert.AreEqual(3067, d.Part1());
-            Assert.AreEqual(1514369501484, d.Part2());
+            Assert.AreEqual(3067, d.SmallTowerHeight());
+            Assert.AreEqual(1514369501484, d.MassiveTowerHeight());
         }
 
         [TestMethod]
@@ -173,10 +173,25 @@ namespace AoC2022Test
             Assert.AreEqual(3560324848168, d.HumanIntervention());
         }
 
+        [TestMethod]
+        public void Day22()
+        {
+            var d = new Day22();
+            Assert.AreEqual(57350, d.Password2D());
+            Assert.AreEqual(-1, d.Part2());
+        }
+
+        [TestMethod]
+        public void Day25()
+        {
+            var d = new Day25();
+            Assert.AreEqual("2-=2-0=-0-=0200=--21", d.Part1());
+        }
+
         public void DayStarter()
         {
             var d = new DayStarter();
-            Assert.AreEqual(85616733059734, d.Part1());
+            Assert.AreEqual(-1, d.Part1());
             Assert.AreEqual(-1, d.Part2());
         }
     }

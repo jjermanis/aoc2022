@@ -150,15 +150,15 @@ namespace AoC2022Test
         {
             var d = new Day16("Day16Test.txt");
             Assert.AreEqual(1651, d.MaxPressureSolo());
-            Assert.AreEqual(-1, d.Part2());
+            Assert.AreEqual(1707, d.Part2());
         }
 
         [TestMethod]
         public void Day17()
         {
             var d = new Day17("Day17Test.txt");
-            Assert.AreEqual(3068, d.Part1());
-            // Assert.AreEqual(-1, d.Part2()); // Keep commented for now - runs for half-hour
+            Assert.AreEqual(3068, d.SmallTowerHeight());
+            //Assert.AreEqual(-1, d.Part2()); // Keep commented for now - runs for half-hour
         }
 
         [TestMethod]
@@ -183,6 +183,21 @@ namespace AoC2022Test
             var d = new Day21("Day21Test.txt");
             Assert.AreEqual(152, d.MonkeyComputation());
             Assert.AreEqual(301, d.HumanIntervention());
+        }
+
+        [TestMethod]
+        public void Day22()
+        {
+            var d = new Day22("Day22Test.txt");
+            Assert.AreEqual(6032, d.Password2D());
+            Assert.AreEqual(-1, d.Part2());
+        }
+
+        [TestMethod]
+        public void Day25()
+        {
+            var d = new Day25("Day25Test.txt");
+            Assert.AreEqual("2=-1=0", d.Part1());
         }
     }
 }

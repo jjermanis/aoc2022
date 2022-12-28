@@ -1,11 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC2022
 {
     public class Day22 : DayBase, IDay
     {
+        // TODO - this does not work on the sample. The "3D folding" is different and will
+        // require different code for Try3DWraparound()
+        // Of all the days... this one rates high for code clean up.
+
+        private class MapState
+        {
+            public int X;
+            public int Y;
+            public int Direction;
+            public readonly int FaceSize;
+            public readonly IDictionary<(int x, int y), char> Map;
+            public IList<string> Path;
+
+            public MapState(
+                int x, int y, 
+                IDictionary<(int x, int y), char> map, 
+                IList<string> path)
+            {
+                X = x;
+                Y = y;
+                Direction = 0;
+                FaceSize = X;
+                Map = map;
+                Path = path;
+            }
+        }
+
         private readonly List<(int x, int y)> VECTORS = new List<(int, int)>()
         {
             (1, 0), (0, 1), (-1, 0), (0, -1)
@@ -23,85 +49,197 @@ namespace AoC2022
         public void Do()
         {
             Console.WriteLine($"{nameof(Password2D)}: {Password2D()}");
-            Console.WriteLine($"{nameof(Part2)}: {Part2()}");
+            Console.WriteLine($"{nameof(Password3D)}: {Password3D()}");
         }
 
         public int Password2D()
             => NavigateMap(Try2DWraparound);
 
-        public int Part2()
-        {
-            return 0;
-        }
+        public int Password3D()
+            => NavigateMap(Try3DWraparound);
 
         private int NavigateMap(
-            Func<IDictionary<(int x, int y), char>, int, int, int, (int, int, int)> TryWrapAroundFunc)
+            Action<MapState> TryWrapAroundFunc)
         {
-            (var start, var map, var path) = Parse();
-            var currX = start.x;
-            var currY = start.y;
-            var currDir = 0;
+            var mapState = Parse();
 
-            foreach (var move in path)
+            foreach (var move in mapState.Path)
             {
                 if (!char.IsDigit(move[0]))
                 {
-                    currDir = move[0] switch
+                    var currDir = move[0] switch
                     {
-                        'L' => currDir - 1,
-                        'R' => currDir + 1,
+                        'L' => mapState.Direction - 1,
+                        'R' => mapState.Direction + 1,
                         _ => throw new Exception("Unknown direction")
                     };
-                    currDir = (currDir + 4) % 4;
+                    mapState.Direction = (currDir + 4) % 4;
                 }
                 else
                 {
                     var distance = int.Parse(move);
-                    var vector = VECTORS[currDir];
                     for (int i = 0; i < distance; i++)
                     {
-                        (var nextX, var nextY) = (currX + vector.x, currY + vector.y);
+                        var vector = VECTORS[mapState.Direction];
+                        (var nextX, var nextY) = (mapState.X + vector.x, mapState.Y + vector.y);
 
-                        if (map.ContainsKey((nextX, nextY)))
+                        if (mapState.Map.ContainsKey((nextX, nextY)))
                         {
-                            if (map[(nextX, nextY)] == '.')
+                            if (mapState.Map[(nextX, nextY)] == '.')
                             {
-                                (currX, currY) = (nextX, nextY);
+                                (mapState.X, mapState.Y) = (nextX, nextY);
                             }
                         }
                         else
                         {
-                            (currX, currY, currDir) = TryWrapAroundFunc(map, currX, currY, currDir);
+                            var x = mapState.X;
+                            var y = mapState.Y;
+                            TryWrapAroundFunc(mapState);
+                            if (mapState.X == x && mapState.Y == y)
+                                // blocked
+                                i = distance;
                         }
                     }
                 }
             }
-            return currY * 1000 + currX * 4 + currDir;
+            return (mapState.Y+1) * 1000 + (mapState.X+1) * 4 + mapState.Direction;
         }
 
-        private (int x, int y, int direction) Try2DWraparound(
-            IDictionary<(int x, int y), char> map,
-            int x, int y, int dir)
+        private void Try2DWraparound(MapState mapState)
         {
-            (var wrapX, var wrapY) = (x, y);
-            var vector = VECTORS[dir];
+            (var wrapX, var wrapY) = (mapState.X, mapState.Y);
+            var vector = VECTORS[mapState.Direction];
 
             while (true)
             {
                 (wrapX, wrapY) = (wrapX - vector.x, wrapY - vector.y);
-                if (!map.ContainsKey((wrapX, wrapY)))
+                if (!mapState.Map.ContainsKey((wrapX, wrapY)))
                 {
                     (wrapX, wrapY) = (wrapX + vector.x, wrapY + vector.y);
                     break;
                 }
             }
-            if (map[(wrapX, wrapY)] == '.')
-                return (wrapX, wrapY, dir);
-
-            return (x, y, dir);
+            if (mapState.Map[(wrapX, wrapY)] == '.')
+            {
+                mapState.X = wrapX;
+                mapState.Y = wrapY;
+            }
         }
 
-        private ((int x, int y) start, IDictionary<(int x, int y), char> map, IList<string> path) Parse()
+        private void Try3DWraparound(MapState mapState)
+        {
+            int currX = mapState.X;
+            int currY = mapState.Y;
+            var currCube = CubeNum(currX, currY, mapState.FaceSize);
+            var option = $"{currCube},{mapState.Direction}";
+            int newX;
+            int newY;
+            int newDir;
+            int expectedDest;
+            switch (option)
+            {
+                case "1,2": // 1 to 6
+                    newX = 0;
+                    newY = (49 - currY) + 100;
+                    newDir = 0;
+                    expectedDest = 6;
+                    break;
+                case "1,3": // 1 to 9
+                    newX = 0;
+                    newY = currX + 100;
+                    newDir = 0;
+                    expectedDest = 9;
+                    break;
+                case "2,0": // 2 to 7
+                    newX = 99;
+                    newY = (49 - currY) + 100;
+                    newDir = 2;
+                    expectedDest = 7;
+                    break;
+                case "2,1": // 2 to 4
+                    newX = 99;
+                    newY = currX - 50;
+                    newDir = 2;
+                    expectedDest = 4;
+                    break;
+                case "2,3": // 2 to 9
+                    newX = currX-100;
+                    newY = 199;
+                    newDir = 3;
+                    expectedDest = 9;
+                    break;
+                case "4,0": // 4 to 2
+                    newX = currY + 50;
+                    newY = 49;
+                    newDir = 3;
+                    expectedDest = 2;
+                    break;
+                case "4,2": // 4 to 6
+                    newX = currY-50;
+                    newY = 100;
+                    newDir = 1;
+                    expectedDest = 6;
+                    break;
+                case "6,2": // 6 to 1
+                    newX = 50;
+                    newY = (149 - currY);
+                    newDir = 0;
+                    expectedDest = 1;
+                    break;
+                case "6,3": // 6 to 4
+                    newX = 50;
+                    newY = currX+50;
+                    newDir = 0;
+                    expectedDest = 4;
+                    break;
+                case "7,0": // 7 to 2
+                    newX = 149;
+                    newY = (149-currY);
+                    newDir = 2;
+                    expectedDest = 2;
+                    break;
+                case "7,1": // 7 to 9
+                    newX = 49;
+                    newY = currX+100;
+                    newDir = 2;
+                    expectedDest = 9;
+                    break;
+                case "9,0": // 9 to 7
+                    newX = currY-100;
+                    newY = 149;
+                    newDir = 3;
+                    expectedDest = 7;
+                    break;
+                case "9,1": // 9 to 2
+                    newX = currX + 100;
+                    newY = 0;
+                    newDir = 1;
+                    expectedDest = 2;
+                    break;
+                case "9,2": // 9 to 1
+                    newX = currY - 100;
+                    newY = 0;
+                    newDir = 1;
+                    expectedDest = 1;
+                    break;
+                default:
+                    throw new Exception($"Unhandled case: {option}");
+            }
+            if (CubeNum(newX, newY, mapState.FaceSize) != expectedDest)
+                throw new Exception("Wrong face dest");
+
+            if (mapState.Map[(newX, newY)] == '.')
+            {
+                mapState.X = newX;
+                mapState.Y = newY;
+                mapState.Direction = newDir;
+            }
+        }
+
+        private int CubeNum(int x, int y, int faceSize)
+            => 3 * (y / faceSize) + (x / faceSize);
+
+        private MapState Parse()
         {
             var map = new Dictionary<(int x, int y), char>();
             var startY = 1;
@@ -115,8 +253,8 @@ namespace AoC2022
                     var curr = line[x];
                     if (curr != ' ')
                     {
-                        map[(x+1, y+1)] = curr;
-                        if (startX < 0 && map[(x+1, y+1)] == '.')
+                        map[(x, y)] = curr;
+                        if (startX < 0 && map[(x, y)] == '.')
                             startX = x;
                     }
                 }
@@ -147,7 +285,7 @@ namespace AoC2022
             if (currDistance > 0)
                 path.Add(currDistance.ToString());
 
-            return ((startX, startY), map, path);
+            return new MapState(startX, startY, map, path);
         }
     }
 }

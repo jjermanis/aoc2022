@@ -178,7 +178,15 @@ namespace AoC2022Test
         {
             var d = new Day22();
             Assert.AreEqual(57350, d.Password2D());
-            Assert.AreEqual(-1, d.Part2());
+            Assert.AreEqual(104385, d.Password3D());
+        }
+
+        [TestMethod]
+        public void Day23()
+        {
+            var d = new Day23();
+            Assert.AreEqual(4241, d.SpaceAfter10Moves());
+            Assert.AreEqual(1079, d.FirstStationaryRound());
         }
 
         [TestMethod]

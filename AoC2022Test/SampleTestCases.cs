@@ -190,7 +190,19 @@ namespace AoC2022Test
         {
             var d = new Day22("Day22Test.txt");
             Assert.AreEqual(6032, d.Password2D());
-            Assert.AreEqual(-1, d.Part2());
+            Assert.AreEqual(104385, d.Password3D());
+        }
+
+        [TestMethod]
+        public void Day23()
+        {
+            var d = new Day23("Day23Test.txt");
+            Assert.AreEqual(25, d.SpaceAfter10Moves());
+            Assert.AreEqual(4, d.FirstStationaryRound());
+
+            var d2 = new Day23("Day23Test2.txt");
+            Assert.AreEqual(110, d2.SpaceAfter10Moves());
+            Assert.AreEqual(20, d2.FirstStationaryRound());
         }
 
         [TestMethod]

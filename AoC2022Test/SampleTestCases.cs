@@ -206,6 +206,14 @@ namespace AoC2022Test
         }
 
         [TestMethod]
+        public void Day24()
+        {
+            var d = new Day24("Day24Test.txt");
+            Assert.AreEqual(18, d.TimeToGoal());
+            Assert.AreEqual(54, d.TimeForTripleTrip());
+        }
+
+        [TestMethod]
         public void Day25()
         {
             var d = new Day25("Day25Test.txt");

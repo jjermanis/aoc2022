@@ -131,7 +131,7 @@ namespace AoC2022Test
         {
             var d = new Day16();
             Assert.AreEqual(1659, d.MaxPressureSolo());
-            Assert.AreEqual(-1, d.Part2());
+            Assert.AreEqual(2382, d.Part2());
         }
 
         [TestMethod]
@@ -187,6 +187,14 @@ namespace AoC2022Test
             var d = new Day23();
             Assert.AreEqual(4241, d.SpaceAfter10Moves());
             Assert.AreEqual(1079, d.FirstStationaryRound());
+        }
+
+        [TestMethod]
+        public void Day24()
+        {
+            var d = new Day24();
+            Assert.AreEqual(288, d.TimeToGoal());
+            Assert.AreEqual(861, d.TimeForTripleTrip());
         }
 
         [TestMethod]

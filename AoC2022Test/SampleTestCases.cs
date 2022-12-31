@@ -150,7 +150,7 @@ namespace AoC2022Test
         {
             var d = new Day16("Day16Test.txt");
             Assert.AreEqual(1651, d.MaxPressureSolo());
-            Assert.AreEqual(1707, d.Part2());
+            Assert.AreEqual(1707, d.MaxpressureDuo());
         }
 
         [TestMethod]
@@ -167,6 +167,14 @@ namespace AoC2022Test
             var d = new Day18("Day18Test.txt");
             Assert.AreEqual(64, d.OpenFaceCount());
             Assert.AreEqual(58, d.ExposedFaceCount());
+        }
+
+        [TestMethod]
+        public void Day19()
+        {
+            var d = new Day19("Day19Test.txt");
+            Assert.AreEqual(33, d.GeodeQualitySum());
+            // No sample provided that matches the 19-2 problem
         }
 
         [TestMethod]
@@ -190,7 +198,7 @@ namespace AoC2022Test
         {
             var d = new Day22("Day22Test.txt");
             Assert.AreEqual(6032, d.Password2D());
-            Assert.AreEqual(104385, d.Password3D());
+            Assert.AreEqual(5031, d.Password3D());
         }
 
         [TestMethod]

@@ -10,7 +10,7 @@ namespace AoC2022
         {
             int start = Environment.TickCount;
 
-            new Day24().Do();
+            new Day19().Do();
             //RunAll();
 
             Console.WriteLine($"Time: {Environment.TickCount - start} ms");

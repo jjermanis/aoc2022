@@ -131,7 +131,7 @@ namespace AoC2022Test
         {
             var d = new Day16();
             Assert.AreEqual(1659, d.MaxPressureSolo());
-            Assert.AreEqual(2382, d.Part2());
+            Assert.AreEqual(2382, d.MaxpressureDuo());
         }
 
         [TestMethod]
@@ -150,11 +150,12 @@ namespace AoC2022Test
             Assert.AreEqual(2052, d.ExposedFaceCount());
         }
 
+        [TestMethod]
         public void Day19()
         {
-            var d = new DayStarter();
-            Assert.AreEqual(-1, d.Part1());
-            Assert.AreEqual(-1, d.Part2());
+            var d = new Day19();
+            Assert.AreEqual(1653, d.GeodeQualitySum());
+            Assert.AreEqual(4212, d.FirstThreeGeodeProduct());
         }
 
         [TestMethod]

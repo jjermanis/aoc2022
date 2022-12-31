@@ -7,29 +7,55 @@ namespace AoC2022
 {
     public class Day16 : DayBase, IDay
     {
+        // TODO yet another case that works for real, and not the sample. Approach for 16-2 takes advantage
+        // of something that does not hold for the sample (because it is small). 
+        // Current approach for 16-2: do all 26 moves with one person, then 26 with another.
+        // To work on sample: attempt to approach both people at same time.
 
-        // TODO: 16-1 runs in about 6 seconds. Are there faster approaches?
-
-        private struct Room
-        {
-            public readonly string Name;
-            public readonly int ValveRate;
-            public readonly List<string> Neighbors;
-
-            public Room(string name, int rate, string neighbors)
-            {
-                Name = name;
-                ValveRate = rate;
-                Neighbors = neighbors.Split(", ").ToList();
-            }
-            public override string ToString()
-                => Name;
-        }
-
-        private readonly IEnumerable<string> _lines;
+        private readonly Dictionary<string, Dictionary<string, int>> _map;
+        private readonly Dictionary<string, int> _valveRate;
 
         public Day16(string filename)
-            => _lines = TextFileLines(filename);
+        {
+            var lines = TextFileLines(filename);
+            _map = new Dictionary<string, Dictionary<string, int>>();
+            _valveRate = new Dictionary<string, int>();
+
+            var internalMap = new Dictionary<string, List<string>>();
+            foreach (var line in lines)
+            {
+                var m = Regex.Match(line, @"Valve ([A-Z][A-Z]) has flow rate=(\d*); tunnels? leads? to valves? (.*)$");
+                var name = m.Groups[1].Value;
+                var rate = int.Parse(m.Groups[2].Value);
+                var rawAdjacentRooms = m.Groups[3].Value.Split(", ").ToList();
+
+                _valveRate[name] = rate;
+                internalMap[name] = rawAdjacentRooms;
+            }
+
+            foreach (var roomName in internalMap.Keys)
+            {
+                if (roomName != "AA" && _valveRate[roomName] == 0)
+                    continue;
+
+                var currDistance = new Dictionary<string, int>();
+                var todo = new Queue<(string name, int time)>();
+                todo.Enqueue((roomName, 0));
+                while (todo.Count > 0)
+                {
+                    var curr = todo.Dequeue();
+                    foreach (var neighbor in internalMap[curr.name])
+                    {
+                        if (!currDistance.ContainsKey(neighbor))
+                        {
+                            currDistance[neighbor] = curr.time + 1;
+                            todo.Enqueue((neighbor, curr.time + 1));
+                        }
+                    }
+                }
+                _map[roomName] = currDistance;
+            }
+        }
 
         public Day16() : this("Day16.txt")
         {
@@ -38,100 +64,63 @@ namespace AoC2022
         public void Do()
         {
             Console.WriteLine($"{nameof(MaxPressureSolo)}: {MaxPressureSolo()}");
-            Console.WriteLine($"{nameof(Part2)}: {Part2()}");
+            Console.WriteLine($"{nameof(MaxpressureDuo)}: {MaxpressureDuo()}");
         }
 
-        public int MaxPressureSolo() 
-            => MaxPressureReleasedSolo(Parse(), "AA", 30);
-
-        private int MaxPressureReleasedSolo(
-            IDictionary<string, Room> rooms,
-            string currRoomName,
-            int minutesRemaining)
+        public int MaxPressureSolo()
         {
-            var cache = new Dictionary<(string, string, int), (int, int)>();
-            var result = MaxPressureReleased(
-                rooms, currRoomName, "", 0, minutesRemaining,
-                cache);
-            return result;
-        }
-
-        private int MaxPressureReleased(
-            in IDictionary<string, Room> rooms,
-            in string currRoomName,
-            in string valvesOpen,
-            in int totalPressureReleased,
-            in int minutesRemaining,
-            IDictionary<(string, string, int), (int curr, int max)> cache)
-        {
-            if (cache.ContainsKey((currRoomName, valvesOpen, minutesRemaining)))
-            {
-                var cacheVal = cache[(currRoomName, valvesOpen, minutesRemaining)];
-                if (cacheVal.curr >= totalPressureReleased)
-                    return cacheVal.max;
-            }
-
-            var delta = 0;
-            var openValveList = new List<string>();
-            if (valvesOpen.Length > 0)
-            {
-                openValveList = valvesOpen.Split(',').ToList();
-                foreach (var valve in openValveList)
-                    delta += rooms[valve].ValveRate;
-            }
-            var updatedPressureReleased = totalPressureReleased + delta;
-
-            if (minutesRemaining == 1)
-            {
-                cache[(currRoomName, valvesOpen, minutesRemaining)] = (totalPressureReleased, updatedPressureReleased);
-                return updatedPressureReleased;
-            }
-
-            var max = updatedPressureReleased;
-
-            if (!valvesOpen.Contains(currRoomName) && rooms[currRoomName].ValveRate > 0)
-            {
-                var temp = new List<string>(openValveList);
-                temp.Add(currRoomName);
-                temp.Sort();
-                var newValvesOpen = temp[0];
-                for (int i = 1; i < temp.Count; i++)
-                {
-                    newValvesOpen += $",{temp[i]}";
-                }
-                var curr = MaxPressureReleased(rooms, currRoomName, newValvesOpen, updatedPressureReleased, minutesRemaining - 1, cache);
-                if (curr > max)
-                    max = curr;
-            }
-            foreach (var neighbor in rooms[currRoomName].Neighbors)
-            {
-                var curr = MaxPressureReleased(rooms, neighbor, valvesOpen, updatedPressureReleased, minutesRemaining-1, cache);
-                if (curr > max)
-                    max = curr;
-            }
-
-            cache[(currRoomName, valvesOpen, minutesRemaining)] = (totalPressureReleased, max);
+            (var max, _) = MaxPressureReleased(AllUsefulValves(), 30);
             return max;
-        } 
-
-        public int Part2()
-        {
-            return 0;
         }
 
-        private IDictionary<string, Room> Parse()
+        public int MaxpressureDuo()
         {
-            var result = new Dictionary<string, Room>();
-            foreach (var line in _lines)
-            {
-                var m = Regex.Match(line, @"Valve ([A-Z][A-Z]) has flow rate=(\d*); tunnels? leads? to valves? (.*)$");
-                var name = m.Groups[1].Value;
-                var rate = int.Parse(m.Groups[2].Value);
-                var rawAdjacentRooms = m.Groups[3].Value;
+            var (max1, remainingValves) = MaxPressureReleased(AllUsefulValves(), 26);
+            var (max2, _) = MaxPressureReleased(remainingValves, 26);
+            return max1+max2;
+        }
 
-                result[name] = new Room(name, rate, rawAdjacentRooms);
-            }
+        private List<string> AllUsefulValves()
+        {
+            var result = new List<string>();
+            foreach (var valve in _valveRate)
+                if (valve.Value > 0)
+                    result.Add(valve.Key);
             return result;
         }
+
+        private (int, List<string>) MaxPressureReleased(List<string> valvesAvailable, int totalTurns)
+            => MaxPressureReleased(valvesAvailable, "AA", totalTurns, 0, 0);
+
+        private (int, List<string>) MaxPressureReleased(
+            List<string> valvesAvailable,
+            string currLocation,
+            int timeRemaining,
+            int currRate,
+            int pressureReleased)
+        {
+            var max = pressureReleased + (timeRemaining * currRate);
+            var bestValves = valvesAvailable;
+            foreach (var valve in valvesAvailable)
+            {
+                var valveTime = _map[currLocation][valve] + 1;
+                var newTime = timeRemaining - valveTime;
+                if (newTime > 0)
+                {
+                    var vaCopy = new List<string>(valvesAvailable);
+                    vaCopy.Remove(valve);
+                    var nextValveRate = _valveRate[valve];
+                    var (currValue, openValves) = MaxPressureReleased(
+                        vaCopy, valve, newTime, currRate + nextValveRate, pressureReleased + (valveTime * currRate));
+                    if (currValue > max)
+                    {
+                        max = currValue;
+                        bestValves = openValves;
+                    }
+                }
+            }
+            return (max, bestValves);
+        }
+
     }
 }

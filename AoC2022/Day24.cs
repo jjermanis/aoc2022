@@ -65,6 +65,7 @@ namespace AoC2022
                     Walls.Add((wx, -1));
                     Walls.Add((wx, 0));
                     Walls.Add((wx, Height-1));
+                    Walls.Add((wx, Height));
                 }
                 Walls.Remove((1, 0));
                 Walls.Remove((Width-2,Height-1));
@@ -165,7 +166,7 @@ namespace AoC2022
             int endY = !toGoal ? 0 : ylr;
 
             var attempts = new Queue<(int x, int y, int t)>();
-            var visited = new HashSet<(int x, int y, int t)>();
+            var visited = new HashSet<int>();
             attempts.Enqueue((startX, startY, startTime));
             while (attempts.Count > 0)
             {
@@ -178,15 +179,19 @@ namespace AoC2022
                 {
                     if (nX == endX && nY == endY)
                         return t + 1;
-                    if (!visited.Contains((nX, nY, t + 1)))
+                    var visitedKey = VisitedKey(nX, nY, t + 1);
+                    if (!visited.Contains(visitedKey))
                     {
-                        visited.Add((nX, nY, t + 1));
+                        visited.Add(visitedKey);
                         attempts.Enqueue((nX, nY, t + 1));
                     }
                 }
             }
             throw new Exception("No path found");
         }
+
+        private int VisitedKey(int x, int y, int t)
+            => (x * 1_000_000) + (y * 1000) + t;
 
         private List<(int x, int y)> GetMoveCandidates(
             int currX, int currY,

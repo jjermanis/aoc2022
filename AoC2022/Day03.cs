@@ -66,10 +66,7 @@ namespace AoC2022
         {
             var result = new HashSet<char>();
             foreach (char c in x)
-            {
-                if (!result.Contains(c))
-                    result.Add(c);
-            }
+                result.Add(c);
             return result;
         }
     }

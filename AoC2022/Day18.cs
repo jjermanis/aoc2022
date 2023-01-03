@@ -39,12 +39,12 @@ namespace AoC2022
 
             int result = 0;
             // Look at all the cubes...
-            foreach ((int x, int y, int z) c in cubes)
+            foreach (var (cx, cy, cz) in cubes)
             {
                 // Look at the six faces. If there is nothing there, it is open
-                foreach ((int dx, int dy, int dz) n in NEIGHBORS)
+                foreach (var (nx, ny, nz) in NEIGHBORS)
                 {
-                    var curr = (c.x + n.dx, c.y + n.dy, c.z + n.dz);
+                    var curr = (cx + nx, cy + ny, cz + nz);
                     if (!cubes.Contains(curr))
                         result++;
                 }
@@ -59,12 +59,12 @@ namespace AoC2022
 
             int result = 0;
             // Look at all the cubes...
-            foreach ((int x, int y, int z) c in cubes)
+            foreach (var (cx, cy, cz) in cubes)
             {
                 // Look at the six faces. If there is water there, it is exposed
-                foreach ((int dx, int dy, int dz) n in NEIGHBORS)
+                foreach (var (nx, ny, nz) in NEIGHBORS)
                 {
-                    var curr = (c.x + n.dx, c.y + n.dy, c.z + n.dz);
+                    var curr = (cx + nx, cy + ny, cz + nz);
                     if (water.Contains(curr))
                         result++;
                 }
@@ -87,21 +87,21 @@ namespace AoC2022
         private HashSet<(int x, int y, int z)> FillWater(HashSet<(int x, int y, int z)> cubes)
         {
             var result = new HashSet<(int x, int y, int z)>();
-            var borders = GetBorders(cubes);
+            var (minX, minY, minZ, maxX, maxY, maxZ) = GetBorders(cubes);
             var flow = new Queue<(int x, int y, int z)>();
-            flow.Enqueue((borders.minX, borders.minY, borders.minZ));
+            flow.Enqueue((minX, minY, minZ));
             while (flow.Count > 0)
             {
                 var curr = flow.Dequeue();
-                if (curr.x >= borders.minX && curr.x <= borders.maxX &&
-                    curr.y >= borders.minY && curr.y <= borders.maxY &&
-                    curr.z >= borders.minZ && curr.z <= borders.maxZ &&
+                if (curr.x >= minX && curr.x <= maxX &&
+                    curr.y >= minY && curr.y <= maxY &&
+                    curr.z >= minZ && curr.z <= maxZ &&
                     !result.Contains(curr) && !cubes.Contains(curr))
                 {
                     result.Add(curr);
-                    foreach (var n in NEIGHBORS)
+                    foreach (var (nx, ny, nz) in NEIGHBORS)
                     {
-                        var nn = (curr.x + n.dx, curr.y + n.dy, curr.z + n.dz);
+                        var nn = (curr.x + nx, curr.y + ny, curr.z + nz);
                         flow.Enqueue(nn);
                     }
                 }
@@ -120,14 +120,14 @@ namespace AoC2022
             var maxY = int.MinValue;
             var maxZ = int.MinValue;
 
-            foreach (var cube in cubes)
+            foreach (var (x,y,z) in cubes)
             {
-                if (cube.x < minX) minX = cube.x;
-                if (cube.y < minY) minY = cube.y;
-                if (cube.z < minZ) minZ = cube.z;
-                if (cube.x > maxX) maxX = cube.x;
-                if (cube.y > maxY) maxY = cube.y;
-                if (cube.z > maxZ) maxZ = cube.z;
+                if (x < minX) minX = x;
+                if (y < minY) minY = y;
+                if (z < minZ) minZ = z;
+                if (x > maxX) maxX = x;
+                if (y > maxY) maxY = y;
+                if (z > maxZ) maxZ = z;
             }
 
             return (minX-1, minY-1, minZ-1, maxX+1, maxY+1, maxZ+1);

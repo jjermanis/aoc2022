@@ -14,38 +14,6 @@ namespace AoC2022
             Scissors = 2
         }
 
-        private readonly IDictionary<char, RPS> _MOVE_MAP =
-            new Dictionary<char, RPS>()
-            {
-                { 'A', RPS.Rock },
-                { 'B', RPS.Paper },
-                { 'C', RPS.Scissors },
-            };
-        
-        private readonly IDictionary<RPS, int> _PLAYER_SCORE =
-            new Dictionary<RPS, int>()
-            {
-                { RPS.Rock, 1 },
-                { RPS.Paper, 2 },
-                { RPS.Scissors, 3 },
-            };
-
-        private readonly IDictionary<RPS, RPS> _WINNING_RESPONSE_MAP =
-            new Dictionary<RPS, RPS>()
-            {
-                { RPS.Rock, RPS.Paper },
-                { RPS.Paper, RPS.Scissors },
-                { RPS.Scissors, RPS.Rock },
-            };
-
-        private readonly IDictionary<RPS, RPS> _LOSING_RESPONSE_MAP =
-            new Dictionary<RPS, RPS>()
-            {
-                { RPS.Rock, RPS.Scissors },
-                { RPS.Paper, RPS.Rock },
-                { RPS.Scissors, RPS.Paper },
-            };
-
         public Day02(string filename)
             => _lines = TextFileLines(filename);
 
@@ -62,7 +30,7 @@ namespace AoC2022
         public int PlanAScore()
         {
             // A, B, C always means opponent plays Rock, Paper, Scissors
-            // In Plan A, X, Y, Z mean player plays Rock, Paper, Scissors 
+            // In Plan A, X, Y, Z means player plays Rock, Paper, Scissors 
 
             var result = 0;
             foreach (var line in _lines)
@@ -84,22 +52,13 @@ namespace AoC2022
             foreach (var line in _lines)
             {
                 RPS opponentMove = (RPS)(line[0] - 'A');
-                RPS playerMove;
-                switch (line[2])
+                RPS playerMove = line[2] switch
                 {
-                    case 'X':
-                        playerMove = _LOSING_RESPONSE_MAP[opponentMove];
-                        break;
-                    case 'Y':
-                        // Draw is also matching moves
-                        playerMove = opponentMove;
-                        break;
-                    case 'Z':
-                        playerMove = _WINNING_RESPONSE_MAP[opponentMove];
-                        break;
-                    default:
-                        throw new Exception();
-                }
+                    'X' => (RPS)(((int)(opponentMove + 2)) % 3),
+                    'Y' => opponentMove,
+                    'Z' => (RPS)(((int)(opponentMove + 1)) % 3),
+                    _ => throw new Exception()
+                };
 
                 result += ScoreRound(opponentMove, playerMove);
             }
@@ -108,20 +67,17 @@ namespace AoC2022
 
         private int ScoreRound(RPS opponent, RPS player)
         {
-            var result = _PLAYER_SCORE[player];
+            var shapeScore = (int)player + 1;
 
             var delta = player - opponent;
-            switch (delta)
+            var outcomeScore = delta switch
             {
-                case 0:
-                    result += 3;
-                    break;
-                case 1:
-                case -2:
-                    result += 6;
-                    break;
-            }
-            return result;
+                0 => 3,
+                1 => 6,
+                -2 => 6,
+                _ => 0
+            };
+            return shapeScore + outcomeScore;
         }
     }
 }

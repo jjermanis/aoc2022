@@ -6,10 +6,10 @@ namespace AoC2022
 {
     public class Day01 : DayBase, IDay
     {
-        private readonly IList<string> _calorieEntries;
+        private readonly IList<string> _lines;
 
         public Day01(string filename)
-            => _calorieEntries = TextFileStringList(filename);
+            => _lines = TextFileStringList(filename);
 
         public Day01() : this("Day01.txt")
         {
@@ -17,26 +17,24 @@ namespace AoC2022
 
         public void Do()
         {
-            Console.WriteLine($"Part1: {MaxElfCalories()}");
-            Console.WriteLine($"Part2: {TopThreeElfCalories()}");
+            Console.WriteLine($"{nameof(MaxElfCalories)}: {MaxElfCalories()}");
+            Console.WriteLine($"{nameof(TopThreeElfCalories)}: {TopThreeElfCalories()}");
         }
 
         public int MaxElfCalories()
             => GetElfCalories().Max();
 
-
         public int TopThreeElfCalories()
         {
             var list = new List<int>(GetElfCalories());
-            list.Sort();
-            list.Reverse();
-            return list[0] + list[1] + list[2];
+            var top = list.OrderByDescending(x => x).ToList();
+            return top[0] + top[1] + top[2];
         }
 
         private IEnumerable<int> GetElfCalories()
         {
-            var subtotal = 0;
-            foreach (var entry in _calorieEntries)
+            int subtotal = 0;
+            foreach (var entry in _lines)
             {
                 if (entry.Length == 0)
                 {
@@ -44,9 +42,7 @@ namespace AoC2022
                     subtotal = 0;
                 }
                 else
-                {
                     subtotal += int.Parse(entry);
-                }    
             }
             yield return subtotal;
         }

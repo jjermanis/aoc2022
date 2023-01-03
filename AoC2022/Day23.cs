@@ -5,7 +5,7 @@ namespace AoC2022
 {
     public class Day23 : DayBase, IDay
     {
-        // TODO this runs in about 2 seconds. Are their efficiencies?
+        // TODO this runs in about 2 seconds. Are there inefficiencies?
         // HasNoNeighbors() has some redunancies. That's one case.
 
         private static readonly IList<(int x, int y)> NORTH 

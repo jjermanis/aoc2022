@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC2022
 {
@@ -37,16 +36,12 @@ namespace AoC2022
             var directorySizes = DirectorySizes();
 
             var totalSize = directorySizes["/"];
-            var unusedSpace = 70000000 - totalSize;
-            var spaceNeeded = 30000000 - unusedSpace;
+            var spaceNeeded = totalSize - 40000000;
 
             var result = totalSize;
             foreach (var size in directorySizes.Values)
-            {
-                if (size >= spaceNeeded)
-                    if (size < result)
+                if (size >= spaceNeeded && size < result)
                         result = size;
-            }
             return result;
         }
 

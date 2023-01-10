@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AoC2022
 {
@@ -14,9 +15,10 @@ namespace AoC2022
 
             public ProcedureStep(string text)
             {
-                Count = int.Parse(text[5..7]);
-                Source = text[^6] - '0';
-                Destination = text[^1] - '0';
+                var m = Regex.Match(text, @"move (\d*) from (\d*) to (\d*)");
+                Count = int.Parse(m.Groups[1].Value);
+                Source = int.Parse(m.Groups[2].Value);
+                Destination = int.Parse(m.Groups[3].Value);
             }
         }
 
@@ -101,14 +103,9 @@ namespace AoC2022
         {
             var tempStack = new Stack<char>();
             for (var i = 0; i < step.Count; i++)
-            {
-                var temp = stacks[step.Source].Pop();
-                tempStack.Push(temp);
-            }
+                tempStack.Push(stacks[step.Source].Pop());
             foreach (var c in tempStack)
-            {
                 stacks[step.Destination].Push(c);
-            }
         }
 
         private string DesiredCratesSummary(List<Stack<char>> stacks)

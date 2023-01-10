@@ -38,7 +38,7 @@ namespace AoC2022
             var result = 0;
             foreach(var line in _lines)
             {
-                (var left, var right) = ParseAssignments(line);
+                var (left, right) = ParseAssignments(line);
                 if (IsFullyContained(left, right))
                     result++;
             }

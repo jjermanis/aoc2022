@@ -7,9 +7,7 @@ namespace AoC2022
 {
     public class Day19 : DayBase, IDay
     {
-        // TODO this is, by far, the slowest, running well over 10 minutes.
-        // 16-1 is about 2 minutes.
-        // 16-2 is about 7 minutes.
+        // TODO a very nice optimization was added, but code is verbose. Clean up.
 
         private class Blueprint
         {
@@ -56,7 +54,7 @@ namespace AoC2022
         public void Do()
         {
             Console.WriteLine($"{nameof(GeodeQualitySum)}: {GeodeQualitySum()}");
-            //Console.WriteLine($"{nameof(FirstThreeGeodeProduct)}: {FirstThreeGeodeProduct()}");
+            Console.WriteLine($"{nameof(FirstThreeGeodeProduct)}: {FirstThreeGeodeProduct()}");
         }
 
         public int GeodeQualitySum()
@@ -107,48 +105,119 @@ namespace AoC2022
             if (maxGeodes[timeRemaining] > geodeCount + 2)
                 return 0;
 
-            // Determine what can be built
-            var buildOre = orbCount >= bp.OreBotOreCost && orbBotCount < maxOreBots;
-            var buildClay = orbCount >= bp.ClayBotOreCost && clayBotCount < maxClayBots;
-            var buildObsidian = orbCount >= bp.ObsidianBotOreCost && clayCount >= bp.ObsidianBotClayCost && obsidianBotCount < maxObsidianBots;
-            var buildGeode = orbCount >= bp.GeodeBotOreCost && obsidianCount >= bp.GeodeBotObsidianCost;
+            var max = geodeCount + (timeRemaining * geodeBotCount);
 
-            // Update for mining
-            orbCount += orbBotCount;
-            clayCount += clayBotCount;
-            obsidianCount += obsidianBotCount;
-            geodeCount += geodeBotCount;
+            if (obsidianBotCount > 0)
+            {
+                var minutesPassed = 1;
+                var tempOrbCount = orbCount;
+                var tempClayCount = clayCount;
+                var tempObsidianCount = obsidianCount;
+                var tempGeodeCount = geodeCount;
 
-            // Try what's available
-            var max = 0;
+                while (tempOrbCount < bp.GeodeBotOreCost || tempObsidianCount < bp.GeodeBotObsidianCost)
+                {
+                    tempOrbCount += orbBotCount;
+                    tempClayCount += clayBotCount;
+                    tempObsidianCount += obsidianBotCount;
+                    tempGeodeCount += geodeBotCount;
+                    minutesPassed++;
+                }
+                tempOrbCount += orbBotCount;
+                tempClayCount += clayBotCount;
+                tempObsidianCount += obsidianBotCount;
+                tempGeodeCount += geodeBotCount;
 
-            if (buildGeode)
-                max = Math.Max(max, MaxGeodes(bp, timeRemaining - 1,
-                    orbBotCount + 1, clayBotCount, obsidianBotCount, geodeBotCount + 1,
-                    orbCount - bp.GeodeBotOreCost, clayCount, obsidianCount - bp.GeodeBotObsidianCost, geodeCount,
-                    maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
-            if (buildObsidian)
-                max = Math.Max(max, MaxGeodes(bp, timeRemaining - 1,
-                    orbBotCount, clayBotCount, obsidianBotCount + 1, geodeBotCount,
-                    orbCount - bp.ObsidianBotOreCost, clayCount - bp.ObsidianBotClayCost, obsidianCount, geodeCount,
-                    maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
-            if (buildClay)
-                max = Math.Max(max, MaxGeodes(bp, timeRemaining - 1,
-                    orbBotCount, clayBotCount + 1, obsidianBotCount, geodeBotCount,
-                    orbCount - bp.ClayBotOreCost, clayCount, obsidianCount, geodeCount,
-                    maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
-            if (buildOre)
-                max = Math.Max(max, MaxGeodes(bp, timeRemaining - 1,
-                    orbBotCount + 1, clayBotCount, obsidianBotCount, geodeBotCount,
-                    orbCount - bp.OreBotOreCost, clayCount, obsidianCount, geodeCount,
-                    maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
-            max = Math.Max(max, MaxGeodes(bp, timeRemaining - 1,
-                orbBotCount, clayBotCount, obsidianBotCount, geodeBotCount,
-                orbCount, clayCount, obsidianCount, geodeCount,
-                maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
+                if (timeRemaining - minutesPassed >= 1)
+                    max = Math.Max(max, MaxGeodes(bp, timeRemaining - minutesPassed,
+                        orbBotCount, clayBotCount, obsidianBotCount, geodeBotCount + 1,
+                        tempOrbCount - bp.GeodeBotOreCost, tempClayCount, tempObsidianCount - bp.GeodeBotObsidianCost, tempGeodeCount,
+                        maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
+            }
+            if (obsidianBotCount < maxObsidianBots && clayBotCount > 0)
+            {
+                var minutesPassed = 1;
+                var tempOrbCount = orbCount;
+                var tempClayCount = clayCount;
+                var tempObsidianCount = obsidianCount;
+                var tempGeodeCount = geodeCount;
+
+                while (tempOrbCount < bp.ObsidianBotOreCost || tempClayCount < bp.ObsidianBotClayCost)
+                {
+                    tempOrbCount += orbBotCount;
+                    tempClayCount += clayBotCount;
+                    tempObsidianCount += obsidianBotCount;
+                    tempGeodeCount += geodeBotCount;
+                    minutesPassed++;
+                }
+                tempOrbCount += orbBotCount;
+                tempClayCount += clayBotCount;
+                tempObsidianCount += obsidianBotCount;
+                tempGeodeCount += geodeBotCount;
+
+                if (timeRemaining - minutesPassed >= 1)
+                    max = Math.Max(max, MaxGeodes(bp, timeRemaining - minutesPassed,
+                        orbBotCount, clayBotCount, obsidianBotCount + 1, geodeBotCount,
+                        tempOrbCount - bp.ObsidianBotOreCost, tempClayCount - bp.ObsidianBotClayCost, tempObsidianCount, tempGeodeCount,
+                        maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
+            }
+            if (orbBotCount < maxOreBots)
+            {
+                var minutesPassed = 1;
+                var tempOrbCount = orbCount;
+                var tempClayCount = clayCount;
+                var tempObsidianCount = obsidianCount;
+                var tempGeodeCount = geodeCount;
+
+                while (tempOrbCount < bp.OreBotOreCost)
+                {
+                    tempOrbCount += orbBotCount;
+                    tempClayCount += clayBotCount;
+                    tempObsidianCount += obsidianBotCount;
+                    tempGeodeCount += geodeBotCount;
+                    minutesPassed++;
+                }
+                tempOrbCount += orbBotCount;
+                tempClayCount += clayBotCount;
+                tempObsidianCount += obsidianBotCount;
+                tempGeodeCount += geodeBotCount;
+
+                if (timeRemaining - minutesPassed >= 1)
+                    max = Math.Max(max, MaxGeodes(bp, timeRemaining - minutesPassed,
+                        orbBotCount + 1, clayBotCount, obsidianBotCount, geodeBotCount,
+                        tempOrbCount - bp.OreBotOreCost, tempClayCount, tempObsidianCount, tempGeodeCount,
+                        maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
+            }
+            if (clayBotCount < maxClayBots)
+            {
+                var minutesPassed = 1;
+                var tempOrbCount = orbCount;
+                var tempClayCount = clayCount;
+                var tempObsidianCount = obsidianCount;
+                var tempGeodeCount = geodeCount;
+
+                while (tempOrbCount < bp.ClayBotOreCost)
+                {
+                    tempOrbCount += orbBotCount;
+                    tempClayCount += clayBotCount;
+                    tempObsidianCount += obsidianBotCount;
+                    tempGeodeCount += geodeBotCount;
+                    minutesPassed++;
+                }
+                tempOrbCount += orbBotCount;
+                tempClayCount += clayBotCount;
+                tempObsidianCount += obsidianBotCount;
+                tempGeodeCount += geodeBotCount;
+
+                if (timeRemaining - minutesPassed >= 1)
+                    max = Math.Max(max, MaxGeodes(bp, timeRemaining - minutesPassed,
+                        orbBotCount, clayBotCount + 1, obsidianBotCount, geodeBotCount,
+                        tempOrbCount - bp.ClayBotOreCost, tempClayCount, tempObsidianCount, tempGeodeCount,
+                        maxOreBots, maxClayBots, maxObsidianBots, maxGeodes));
+            }
 
             return max;
-       
+
         }
     }
 }

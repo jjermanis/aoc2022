@@ -5,8 +5,7 @@ namespace AoC2022
 {
     public class Day23 : DayBase, IDay
     {
-        // TODO this runs in about 2 seconds. Are there inefficiencies?
-        // HasNoNeighbors() has some redunancies. That's one case.
+        // TODO. THis is decently fast. Might this be even faster using an array instead of the HashSet?
 
         private static readonly IList<(int x, int y)> NORTH 
             = new List<(int x, int y)>(){ (0, -1), (1, -1), (-1, -1) };
@@ -60,43 +59,55 @@ namespace AoC2022
             }
         }
 
-        private HashSet<(int x, int y)> ParseMap()
+        private int CoordToHashKey(int x, int y)
+            => 1024 * (x + 512) + (y + 512);
+        private (int x, int y) CoordFromHashKey(int key)
+            => (key / 1024 - 512, key % 1024 - 512);
+
+        private HashSet<int> ParseMap()
         {
-            var result = new HashSet<(int x, int y)>();
+            var result = new HashSet<int>();
             var y = 0;
             foreach (var line in _lines)
             {
                 for (var x = 0; x < line.Length; x++)
                 {
                     if (line[x] == '#')
-                        result.Add((x, y));
+                        result.Add(CoordToHashKey(x, y));
                 }
                 y++;
             }
             return result;
         }
 
-        private List<(int x, int y)> ElvesToMove(HashSet<(int x, int y)> elves)
+        private List<(int x, int y)> ElvesToMove(HashSet<int> elves)
         {
             var result = new List<(int x, int y)>();
-            foreach (var (currX, currY) in elves)
+            foreach (var hashKey in elves)
+            {
+                var (currX, currY) = CoordFromHashKey(hashKey);
                 if (!HasNoNeighbors(elves, currX, currY))
                     result.Add((currX, currY));
+            }
             return result;
         }
 
-        private bool HasNoNeighbors(HashSet<(int x, int y)> elves, int x, int y)
+        private bool HasNoNeighbors(HashSet<int> elves, int x, int y)
         {
-            foreach (var move in MOVE_ORDER)
-                foreach (var vector in move)
-                    if (elves.Contains((x + vector.x, y + vector.y)))
-                        return false;
+            for (var dx = -1; dx <= 1; dx++)
+                for (var dy = -1; dy <= 1; dy++)
+                    if (dx != 0 || dy != 0)
+                    {
+                        var currKey = CoordToHashKey(x + dx, y + dy);
+                        if (elves.Contains(currKey))
+                            return false;
+                    }
             return true;
         }
 
         private void MoveElves(
             List<(int x, int y)> elvesToMove,
-            HashSet<(int x, int y)> elves,
+            HashSet<int> elves,
             int roundNum)
         {
             var proposedMoves = new Dictionary<(int x, int y), (int x, int y)>();
@@ -108,8 +119,11 @@ namespace AoC2022
                     var curMove = MOVE_ORDER[i % 4];
                     var collisionFound = false;
                     foreach (var (dX, dY) in curMove)
-                        if (elves.Contains((currX + dX, currY + dY)))
+                    {
+                        var currKey = CoordToHashKey(currX + dX, currY + dY);
+                        if (elves.Contains(currKey))
                             collisionFound = true;
+                    }
                     if (!collisionFound)
                     {
                         freeDirection = i % 4;
@@ -130,21 +144,22 @@ namespace AoC2022
                 var (currX, currY) = proposedMoves[(newX, newY)];
                 if (currX != int.MinValue)
                 {
-                    elves.Remove((currX, currY));
-                    elves.Add((newX, newY));
+                    elves.Remove(CoordToHashKey(currX, currY));
+                    elves.Add(CoordToHashKey(newX, newY));
                 }
             }
         }
 
-        private int FreeSpacesInMap(HashSet<(int x, int y)> elves)
+        private int FreeSpacesInMap(HashSet<int> elves)
         {
             int minX = int.MaxValue;
             int maxX = int.MinValue;
             int minY = int.MaxValue;
             int maxY = int.MinValue;
 
-            foreach (var (x, y) in elves)
+            foreach (var key in elves)
             {
+                var (x, y) = CoordFromHashKey(key);
                 minX = Math.Min(minX, x);
                 maxX = Math.Max(maxX, x);
                 minY = Math.Min(minY, y);

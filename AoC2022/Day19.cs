@@ -102,7 +102,7 @@ namespace AoC2022
             // Check geodes
             if (geodeCount > maxGeodes[timeRemaining])
                 maxGeodes[timeRemaining] = geodeCount;
-            if (maxGeodes[timeRemaining] > geodeCount + 2)
+            if (maxGeodes[timeRemaining] > geodeCount)
                 return 0;
 
             var max = geodeCount + (timeRemaining * geodeBotCount);

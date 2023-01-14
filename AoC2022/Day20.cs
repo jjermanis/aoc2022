@@ -5,9 +5,6 @@ namespace AoC2022
 {
     public class Day20 : DayBase, IDay
     {
-        // TODO - takes over a second, which is... OK
-        // String conversion is used to track order - try using a pure long? Or a Tuple?
-
         private readonly IEnumerable<string> _lines;
 
         public Day20(string filename)
@@ -52,17 +49,16 @@ namespace AoC2022
             IList<long> numberOrder,
             int repetitions)
         {
-            var detailList = new List<string>();
+            var detailList = new List<(long, int)>();
             for (int i = 0; i < numberOrder.Count; i++)
-                detailList.Add($"{numberOrder[i]}_{i}");
+                detailList.Add((numberOrder[i], i));
             var listLen = numberOrder.Count;
 
             for (int c = 0; c < repetitions; c++)
             {
                 for (int i = 0; i < listLen; i++)
                 {
-                    var detailName = $"{numberOrder[i]}_{i}";
-                    var index = detailList.IndexOf(detailName);
+                    var index = detailList.IndexOf((numberOrder[i], i));
                     detailList.RemoveAt(index);
                     var delta = numberOrder[i];
                     var newIndex = index + delta;
@@ -76,14 +72,14 @@ namespace AoC2022
                     }    
                     if (newIndex >= listLen)
                         newIndex = newIndex % (listLen - 1);
-                    detailList.Insert((int)newIndex, detailName);
+                    detailList.Insert((int)newIndex, (numberOrder[i], i));
                 }
             }
 
             // Strip away the detailed name, and get back to the original numbers
             var result = new List<long>();
-            foreach (var val in detailList)
-                result.Add(long.Parse(val.Split('_')[0]));
+            foreach (var (val,_) in detailList)
+                result.Add(val);
             return result;
         }
 

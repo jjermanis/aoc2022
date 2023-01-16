@@ -24,8 +24,6 @@ namespace AoC2022
             => FindDistance(false);
 
         public int PathLengthFromLowPoint()
-            // TODO - for this case, instead of "going back" when a's are found, would
-            // it make sense to just start from every a?
             => FindDistance(true);
 
         private int FindDistance(bool resetOnA)

@@ -83,7 +83,7 @@ namespace AoC2022Test
         {
             var d = new Day10();
             Assert.AreEqual(14360, d.InterestingSignalSum());
-            // TODO: figure out a unit test for this one
+            // 10-2 is a graphic representation of characters; not obvious unit test
         }
 
         [TestMethod]

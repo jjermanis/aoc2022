@@ -5,10 +5,15 @@ namespace AoC2022
 {
     public class Day08 : DayBase, IDay
     {
-        private readonly IList<string> _lines;
+        private readonly char[,] _trees;
+        private readonly int _width;
+        private readonly int _height;
 
         public Day08(string filename)
-            => _lines = TextFileStringList(filename);
+        { 
+             var lines = TextFileStringList(filename);
+            (_trees, _width, _height) = GetTreeGrid(lines);
+        }
 
         public Day08() : this("Day08.txt")
         {
@@ -22,50 +27,49 @@ namespace AoC2022
 
         public int VisibleTreeCount()
         {
-            (var trees, var width, var height) = GetTreeGrid();
-            var isVisible = new bool[width,height];
+            var isVisible = new bool[_width, _height];
 
             // Check columns
-            for (var x=0; x < width; x++)
+            for (var x=0; x < _width; x++)
             {
                 var tallest = ' ';
-                for (var y=0; y < height; y++)
+                for (var y=0; y < _height; y++)
                 {
-                    if (trees[x,y] > tallest)
+                    if (_trees[x,y] > tallest)
                     {
                         isVisible[x,y] = true;
-                        tallest = trees[x, y];
+                        tallest = _trees[x, y];
                     }
                 }
                 tallest = ' ';
-                for (var y = height-1; y >= 0; y--)
+                for (var y = _height-1; y >= 0; y--)
                 {
-                    if (trees[x, y] > tallest)
+                    if (_trees[x, y] > tallest)
                     {
                         isVisible[x, y] = true;
-                        tallest = trees[x, y];
+                        tallest = _trees[x, y];
                     }
                 }
             }
             // Check rows
-            for (var y = 0; y < height; y++)
+            for (var y = 0; y < _height; y++)
             {
                 var tallest = ' ';
-                for (var x = 0; x < width; x++)
+                for (var x = 0; x < _width; x++)
                 {
-                    if (trees[x, y] > tallest)
+                    if (_trees[x, y] > tallest)
                     {
                         isVisible[x, y] = true;
-                        tallest = trees[x, y];
+                        tallest = _trees[x, y];
                     }
                 }
                 tallest = ' ';
-                for (var x = width - 1; x >= 0; x--)
+                for (var x = _width - 1; x >= 0; x--)
                 {
-                    if (trees[x, y] > tallest)
+                    if (_trees[x, y] > tallest)
                     {
                         isVisible[x, y] = true;
-                        tallest = trees[x, y];
+                        tallest = _trees[x, y];
                     }
                 }
             }
@@ -80,28 +84,26 @@ namespace AoC2022
 
         public int BestScenicScore()
         {
-            // 108192 is too low
-            (var trees, var width, var height) = GetTreeGrid();
             var result = 0;
-            for (var x = 1; x < width-1; x++)
-                for (var y = 1; y < height-1; y++)
+            for (var x = 1; x < _width-1; x++)
+                for (var y = 1; y < _height-1; y++)
                 {
-                    var curr = ScenicScore(trees, width, height, x, y);
+                    var curr = ScenicScore(x, y);
                     if (curr > result)
                         result = curr;
                 }
             return result;
         }
 
-        private (char[,], int, int) GetTreeGrid()
+        private (char[,], int, int) GetTreeGrid(IList<string> lines)
         {
-            var width = _lines[0].Length;
-            var height = _lines.Count;
+            var width = lines[0].Length;
+            var height = lines.Count;
             var result = new char[width, height];
 
             for (int y = 0; y < height; y++)
             {
-                var currLine = _lines[y];
+                var currLine = lines[y];
                 for (int x = 0; x < width; x++)
                 {
                     result[x,y] = currLine[x];
@@ -111,19 +113,16 @@ namespace AoC2022
         }
 
         private int ScenicScore(
-            char[,] trees, 
-            int gridWidth,
-            int gridHeight,
             int currX, 
             int currY)
         {
-            var height = trees[currX, currY];
+            var height = _trees[currX, currY];
 
             var rightScore = 0;
-            for (var x = currX + 1; x < gridWidth; x++)
+            for (var x = currX + 1; x < _width; x++)
             {
                 rightScore++;
-                if (trees[x, currY] >= height)
+                if (_trees[x, currY] >= height)
                     break;
             }
 
@@ -131,15 +130,15 @@ namespace AoC2022
             for (var x = currX - 1; x >= 0; x--)
             {
                 leftScore++;
-                if (trees[x, currY] >= height)
+                if (_trees[x, currY] >= height)
                     break;
             }
 
             var downScore = 0;
-            for (var y = currY + 1; y < gridHeight; y++)
+            for (var y = currY + 1; y < _height; y++)
             {
                 downScore++;
-                if (trees[currX, y] >= height)
+                if (_trees[currX, y] >= height)
                     break;
             }
 
@@ -147,7 +146,7 @@ namespace AoC2022
             for (var y = currY - 1; y >= 0; y--)
             {
                 upScore++;
-                if (trees[currX, y] >= height)
+                if (_trees[currX, y] >= height)
                     break;
             }
 

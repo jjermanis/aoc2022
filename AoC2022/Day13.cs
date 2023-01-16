@@ -3,15 +3,13 @@ using System.Collections.Generic;
 
 namespace AoC2022
 {
-    // TODO: there are multiple places for simplification in this class
-
     public class Day13 : DayBase, IDay
     {
         private enum PacketOrder
         {
-            Right,
-            Wrong,
-            Equal
+            Right = -1,
+            Wrong = 1,
+            Equal = 0
         };
 
         private abstract class PacketData { }
@@ -103,18 +101,7 @@ namespace AoC2022
             => GetPacketOrder(left, right) == PacketOrder.Right;
 
         private int ComparePacketLists(PacketList a, PacketList b)
-        {
-            switch (GetPacketOrder(a, b))
-            {
-                case PacketOrder.Right:
-                    return -1;
-                case PacketOrder.Wrong:
-                    return 1;
-                case PacketOrder.Equal:
-                    return 0;
-            }
-            throw new Exception("Unhandled case");
-        }
+            => (int)GetPacketOrder(a, b);
 
         private PacketOrder GetPacketOrder(PacketList left, PacketList right)
         {
